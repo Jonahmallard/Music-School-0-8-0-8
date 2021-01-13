@@ -27,6 +27,7 @@ def signup(request):
     is_teacher = request.POST.get('is_teacher', False) and True
     location = request.POST.get('location')
     bio = request.POST.get('bio')
+    email = request.POST.get('email')
     first_name = request.POST.get('first_name')
     last_name = request.POST.get('last_name')
     if 'is_teacher' in form_data:
@@ -43,7 +44,8 @@ def signup(request):
           last_name=last_name, 
           is_teacher=is_teacher, 
           location=location, 
-          bio=bio, user=user
+          bio=bio, user=user,
+          email=email, 
         )
         # This is how we log a user in via code
         # Teachers index is showing students index
@@ -66,10 +68,6 @@ def profiles_detail(request, profile_id):
     'lesson_form': lesson_form
   })
 
-class LessonCreateView(CreateView):
-    model = Lesson
-    form_class = LessonForm
-
 @login_required
 def add_lesson(request, profile_id):
   form = LessonForm(request.POST)
@@ -79,6 +77,7 @@ def add_lesson(request, profile_id):
     new_lesson.save()
   return redirect('detail', profile_id=profile_id)
 
+@login_required
 def add_photo(request, profile_id):
   # photo-file will be the "name" attribute on the <input type="file"> used to upload the file
   photo_file = request.FILES.get('photo-file', None)
@@ -96,6 +95,7 @@ def add_photo(request, profile_id):
       print('An error occurred uploading file to S3')
   return redirect('detail', profile_id=profile_id)
 
+@login_required
 def delete_photo(request, profile_id):
   Photo.objects.get(profile_id=profile_id).delete()
   return redirect('detail', profile_id=profile_id)
@@ -103,6 +103,10 @@ def delete_photo(request, profile_id):
 def teachers_index(request):
   teachers = Profile.objects.all()
   return render(request, 'teachers/index.html', { 'teachers': teachers })
+
+class LessonCreateView(LoginRequiredMixin, CreateView):
+  model = Lesson
+  form_class = LessonForm
 
 class LessonUpdate(LoginRequiredMixin, UpdateView):
   model = Lesson
@@ -118,4 +122,4 @@ class LessonDelete(LoginRequiredMixin, DeleteView):
 
 class TeacherUpdate(LoginRequiredMixin,UpdateView):
   model = Profile
-  fields = ['first_name', 'last_name', 'location', 'bio']
+  fields = ['first_name', 'last_name', 'email', 'location', 'bio']
