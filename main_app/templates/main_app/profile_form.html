@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="form" id="profile-edit">
+  
+  <h1>Edit Profile</h1>
+  
+  <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form }}
+    </table>
+    <div class="button-bar">
+      <button type="submit">Save Changes</button>
+    </div>
+  </form>
+  
+  {% if object %} 
+    <form action="{% url 'add_photo' profile.id %}" enctype="multipart/form-data" method="POST" class="card-panel">
+      {% csrf_token %}
+      <input type="file" name="photo-file">
+      <br><br>
+      <div class="button-bar">
+        <button type="submit">Upload Photo</button>
+      </div>
+    </form>
+  {% endif %}
+<div class="button-bar">
+  <a href="/"><button>Cancel</button></a>
+</div>
+</section>
+
+{% endblock %}

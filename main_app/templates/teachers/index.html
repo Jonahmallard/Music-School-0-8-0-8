@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section id="index">
+
+  <h1>Our Instructors</h1>
+
+  {% for teacher in teachers %}
+  {% if teacher.is_teacher == True %}
+
+    <div class="teacher-card">
+      <a href="{% url 'detail' teacher.id %}">
+        <div class="teacher-content">
+          <img src="{{teacher.photo_set.first.url}}">
+          <span class="card-title"> {{ teacher.name }} </span>
+          <h2> {{ teacher.first_name }} {{ teacher.last_name }} </h2>
+          <p>Location: {{ teacher.location }} </p>
+          <p>Bio: {{ teacher.bio }} </p>
+        </div>
+      </a>
+    </div>
+
+  {% endif %}
+  {% endfor %}
+
+</section>
+
+{% endblock %}
